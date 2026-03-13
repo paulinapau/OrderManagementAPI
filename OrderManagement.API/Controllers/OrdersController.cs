@@ -19,7 +19,7 @@ namespace OrderManagement.API.Controllers
         /// <response code="201">Order created successfully.</response>
         /// <response code="400">Request is invalid or order contains no products.</response>
         /// <response code="404">One or more products were not found.</response>
-        [HttpPost("bulk")]
+        [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -30,7 +30,7 @@ namespace OrderManagement.API.Controllers
             try
             {
                 var createdOrders = await _service.CreateOrdersAsync(orders);
-                return Created("/api/orders/bulk", createdOrders);
+                return Created("/api/orders", createdOrders);
             }
             catch (ArgumentException ex)
             {
