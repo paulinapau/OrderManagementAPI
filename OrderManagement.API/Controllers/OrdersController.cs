@@ -3,8 +3,6 @@ using OrderManagement.Application.DTOs;
 using OrderManagement.Application.Services;
 using OrderManagement.Domain.Entities;
 
-//As a retailer, I can retrieve report for discounted product. The report should show the discounted product name, discount (%), 
-//    number of orders that include this discounted product, and total amount ($) ordered of this discounted product;
 namespace OrderManagement.API.Controllers
 {
     [ApiController]
@@ -44,6 +42,7 @@ namespace OrderManagement.API.Controllers
             }
 
         }
+
         /// <summary>
         /// Retrieves a paginated list of orders from the database.
         /// </summary>
@@ -62,6 +61,7 @@ namespace OrderManagement.API.Controllers
             }
             return Ok(await _service.GetAllOrdersAsync(page, pageSize));
         }
+
         /// <summary>
         /// Retrieves the invoice for a specific order by its order number.
         /// </summary>

@@ -57,6 +57,7 @@ public class ProductsController(ProductService service) : ControllerBase
 
         }
     }
+
     /// <summary>
     /// Search products by name with pagination
     /// </summary>
@@ -81,6 +82,7 @@ public class ProductsController(ProductService service) : ControllerBase
 
         return Ok(result);
     }
+
     /// <summary>
     /// Apply a discount to a product.
     /// </summary>
