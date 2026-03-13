@@ -97,6 +97,6 @@ solution implements these:
 
 # Spent time
 
-4h setting up project/database/Docker
-4h implementing APIs
-1h Writing and running tests
+- 4h setting up project/database/Docker
+- 4h implementing APIs
+- 1h Writing and running tests
