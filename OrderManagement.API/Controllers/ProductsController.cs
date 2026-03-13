@@ -26,37 +26,17 @@ public class ProductsController(ProductService service) : ControllerBase
     }
 
     /// <summary>
-    /// Add a single product to the database
-    /// </summary>
-    /// <param name="productdto">Product with name and price</param>
-    /// <returns>Created product</returns>
-    /// <response code="201">Product created successfully</response>
-    /// <response code="409">Product with the same name already exists</response>
-    [HttpPost]
-    [ProducesResponseType(StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<IActionResult> Create(ProductDto productdto)
-    {
-        if (await _service.ProductExists(productdto.Name))
-        {
-            return Conflict($"A product with the name '{productdto.Name}' already exists.");
-        }
-
-        var product = await _service.AddProduct(productdto);
-        return CreatedAtAction(nameof(Get), new { id = product.Id }, product);
-    }
-    /// <summary>
-    /// Add a multiple products to the database
+    /// Add multiple products to the database
     /// </summary>
     /// <param name="products">Product list with name and price</param>
     /// <returns>Created products</returns>
     /// <response code="201">Product list created successfully</response>
     /// <response code="409">Product with the same name already exists</response>
-    [HttpPost("bulk")]
+    [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> CreateMultiple(List<ProductDto> products)
+    public async Task<IActionResult> Create(List<ProductDto> products)
     {
         if (products == null || !products.Any())
         {
@@ -71,6 +51,11 @@ public class ProductsController(ProductService service) : ControllerBase
         {
             return Conflict("A product with this name already exists.");
         }
+        catch (InvalidOperationException)
+        {
+            return Conflict("One or more products already exist in the database.");
+
+        }
     }
     /// <summary>
     /// Search products by name with pagination
@@ -80,6 +65,7 @@ public class ProductsController(ProductService service) : ControllerBase
     /// <param name="pageSize">Number of items per page</param>
     /// <returns>Created products</returns>
     /// <response code="201">Product list found successfully</response>
+    /// <response code="400">Invalid page or pageSize values</response>
     [HttpGet("search")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetProducts(
@@ -87,6 +73,10 @@ public class ProductsController(ProductService service) : ControllerBase
     [FromQuery] int page = 1,
     [FromQuery] int pageSize = 20)
     {
+        if (page <= 0 || pageSize <= 0 || pageSize > 100)
+        {
+            return BadRequest("Page or page size have incorect value.");
+        }
         var result = await _service.GetProducts(name, page, pageSize);
 
         return Ok(result);
@@ -126,7 +116,29 @@ public class ProductsController(ProductService service) : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Retrieves a report for a discounted product.
+    /// </summary>
+    /// <param name="productName">The name of the product to generate the discount report for.</param>
+    /// <returns>A report containing the product name, discount (%), number of orders including this discounted product, 
+    /// and total amount ($) ordered for this product.</returns>
+    /// <response code="200">Discounted product report retrieved successfully.</response>
+    /// <response code="404">No orders found for the specified discounted product.</response>
+    [HttpGet("discount-report")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetDiscountReport([FromQuery] string productName)
+    {
+        var report = await _service.GetDiscountedProductReportAsync(productName);
+
+        if (report == null)
+            return NotFound($"No orders found for discounted product '{productName}'.");
+
+        return Ok(report);
+    }
+
     [HttpGet("discount/{id}")]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public async Task<IActionResult> GetDiscount(Guid id)
     {
         var discount = await _service.GetDiscountByIdAsync(id);

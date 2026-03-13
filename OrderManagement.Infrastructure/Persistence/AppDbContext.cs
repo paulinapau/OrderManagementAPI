@@ -17,6 +17,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         modelBuilder.Entity<Product>()
             .HasIndex(p => p.Name)
             .IsUnique();
+
         modelBuilder.Entity<Discount>()
             .HasOne(d => d.Product)
             .WithMany(p => p.Discounts)
@@ -24,19 +25,23 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             .IsRequired();
 
         modelBuilder.Entity<OrderProduct>()
-         .HasOne(d => d.Product)
-         .WithMany(p => p.OrderProducts)
-         .HasForeignKey(d => d.ProductId)
-         .IsRequired();
+            .HasOne(d => d.Product)
+            .WithMany(p => p.OrderProducts)
+            .HasForeignKey(d => d.ProductId)
+            .IsRequired();
 
         modelBuilder.Entity<OrderProduct>()
-        .HasOne(d => d.Order)
-        .WithMany(p => p.Products)
-        .HasForeignKey(d => d.OrderId)
-        .IsRequired();
+            .HasOne(d => d.Order)
+            .WithMany(p => p.Products)
+            .HasForeignKey(d => d.OrderId)
+            .IsRequired();
+
         modelBuilder.Entity<Order>()
-    .HasIndex(o => o.Number)
-    .IsUnique();
+            .HasIndex(o => o.Number)
+            .IsUnique();
+        modelBuilder.Entity<Order>()
+            .Property(o => o.Number)
+            .ValueGeneratedOnAdd();
 
 
         base.OnModelCreating(modelBuilder);

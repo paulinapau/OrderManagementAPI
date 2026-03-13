@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace OrderManagement.Domain.Entities
@@ -7,8 +8,9 @@ namespace OrderManagement.Domain.Entities
     public class Order
     {
         public Guid Id { get; set; } = Guid.NewGuid();
-        public int Number { get; set; } = 0;
-        public decimal TotalAmount => Products.Sum(op => op.Product.Price * op.Quantity);
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Number { get; set; } 
+        public decimal TotalAmount { get; set; }
         public ICollection<OrderProduct> Products { get; set; } = []; 
     }
 }

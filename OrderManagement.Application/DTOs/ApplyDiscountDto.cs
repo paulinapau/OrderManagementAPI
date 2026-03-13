@@ -14,6 +14,6 @@ namespace OrderManagement.Application.DTOs
         public decimal Percentage { get; set; } 
 
         [Required]
-        public int MinQuantity { get; set; }              
+        public decimal MinQuantity { get; set; }              
     }
 }

@@ -9,9 +9,8 @@ namespace OrderManagement.Domain.Entities
     public class Discount
     {
         public Guid Id { get; set; } = Guid.NewGuid();
-        public int MinQuantity { get; set; } = 0;
+        public decimal MinQuantity { get; set; } = 0;
         public decimal Percentage { get; set; }
-
         [Required]
         public Guid ProductId { get; set; }
         [JsonIgnore]
